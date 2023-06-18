@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="b30">B30</string>
+    <string name="playerName">玩家名称</string>
+    <string name="recordbackgroundimage">recordBackgroundImage</string>
+</resources>
