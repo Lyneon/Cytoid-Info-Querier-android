@@ -42,7 +42,7 @@ object NetRequest {
 //        val data = "{\"query\":\"query StudioAnalytics(${'$'}id:ID=\"${id}\") {profile(id:${'$'}id) {bestRecords(limit: 30) {score,details{perfect,great,good,bad,miss,maxCombo},mods,chart{name,difficulty,notesCount,level {title}},accuracy,rating}}}\"}"
         val data = """{"operationName":null,
             |"variables":{},
-            |"query":"{profile(uid:\"$playerName\"){bestRecords(limit:$count){score,mods,accuracy,rating,details{perfect,great,good,bad,miss,maxCombo},chart{type,difficulty,notesCount,level{title,bundle{backgroundImage{original,thumbnail}}}}}}}"}""".trimMargin()
+            |"query":"{profile(uid:\"$playerName\"){bestRecords(limit:$count){date,score,mods,accuracy,rating,details{perfect,great,good,bad,miss,maxCombo},chart{type,difficulty,notesCount,level{title,bundle{backgroundImage{original,thumbnail}}}}}}}"}""".trimMargin()
         val body = data.toRequestBody("application/json".toMediaTypeOrNull())
         val request = Request.Builder()
             .url("https://services.cytoid.io/graphql")

@@ -64,7 +64,9 @@ object DataParser {
             appendLine("Mods：${record.mods}")
             appendLine("精准度：${((record.accuracy) * 100).fix(2)}%")
             appendLine("单曲Rating：${record.rating}")
-            append(record.details.toString())
+            appendLine(record.details.toString())
+            appendLine()
+            append(record.date)
         }.toString()
 
     fun parseB30RecordsToText(b30Records: B30Records, playerName: String): String =

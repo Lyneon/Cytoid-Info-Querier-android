@@ -9,10 +9,10 @@
         android:title="@string/copy"
         app:showAsAction="ifRoom"/>
 
-    <item
-        android:id="@+id/menu_crash_restart"
-        android:icon="@drawable/ic_menu_restart"
-        android:title="@string/restart"
-        app:showAsAction="ifRoom"/>
+<!--    <item-->
+<!--        android:id="@+id/menu_crash_restart"-->
+<!--        android:icon="@drawable/ic_menu_restart"-->
+<!--        android:title="@string/restart"-->
+<!--        app:showAsAction="ifRoom"/>-->
 
 </menu>

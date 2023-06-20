@@ -34,7 +34,6 @@ class BaseApplication : Application() {
         super.onCreate()
         context = applicationContext
         Thread.setDefaultUncaughtExceptionHandler { _, p1 ->
-            ActivityCollector.finishAll()
             startActivity<CrashActivity> {
                 putExtra("e", p1.stackTraceToString())
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)

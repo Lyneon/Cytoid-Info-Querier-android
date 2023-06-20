@@ -6,11 +6,9 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import com.lyneon.cytoidinfoquerier.BaseActivity
-import com.lyneon.cytoidinfoquerier.BaseApplication
 import com.lyneon.cytoidinfoquerier.R
 import com.lyneon.cytoidinfoquerier.databinding.ActivityCrashBinding
 import com.lyneon.cytoidinfoquerier.tool.showToast
-import com.lyneon.cytoidinfoquerier.tool.startActivity
 
 class CrashActivity : BaseActivity() {
 
@@ -42,10 +40,10 @@ class CrashActivity : BaseActivity() {
                 "已复制到剪贴板".showToast()
             }
 
-            R.id.menu_crash_restart -> {
-                startActivity<MainActivity> { }
-                finish()
-            }
+//            R.id.menu_crash_restart -> {
+//                startActivity<MainActivity> { }
+//                finish()
+//            }
         }
         return true
     }

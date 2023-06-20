@@ -5,4 +5,5 @@
     <string name="recordbackgroundimage">recordBackgroundImage</string>
     <string name="copy">复制</string>
     <string name="restart">重启</string>
+    <string name="save">保存</string>
 </resources>
