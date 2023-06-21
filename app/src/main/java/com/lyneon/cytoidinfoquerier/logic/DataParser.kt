@@ -2,6 +2,8 @@ package com.lyneon.cytoidinfoquerier.logic
 
 import com.lyneon.cytoidinfoquerier.logic.model.B30Records
 import com.lyneon.cytoidinfoquerier.logic.model.PlayerProfile
+import com.lyneon.cytoidinfoquerier.tool.DateParser
+import com.lyneon.cytoidinfoquerier.tool.DateParser.formatToGMT8String
 import com.lyneon.cytoidinfoquerier.tool.fix
 
 object DataParser {
@@ -66,7 +68,7 @@ object DataParser {
             appendLine("单曲Rating：${record.rating}")
             appendLine(record.details.toString())
             appendLine()
-            append(record.date)
+            append(DateParser.parseISO8601Date(record.date).formatToGMT8String())
         }.toString()
 
     fun parseB30RecordsToText(b30Records: B30Records, playerName: String): String =
