@@ -40,18 +40,18 @@ class MainActivity : AppCompatActivity() {
         val view = binding.root
         setContentView(view)
 
-        binding.editTextTextPlayerName.addTextChangedListener {
-            if (it.isNullOrEmpty()) binding.editTextTextPlayerName.error = "玩家名不能为空"
-            else binding.editTextTextPlayerName.error = null
+        binding.textInputEditTextPlayerName.addTextChangedListener {
+            if (it.isNullOrEmpty()) binding.textInputEditTextPlayerName.error = "玩家名不能为空"
+            else binding.textInputEditTextPlayerName.error = null
         }
 
         binding.buttonQueryB30.setOnClickListener {
-            if (binding.editTextTextPlayerName.length() == 0) {
-                binding.editTextTextPlayerName.error = "玩家名不能为空"
-                binding.editTextTextPlayerName.requestFocus()
+            if (binding.textInputEditTextPlayerName.length() == 0) {
+                binding.textInputEditTextPlayerName.error = "玩家名不能为空"
+                binding.textInputEditTextPlayerName.requestFocus()
                 return@setOnClickListener
             }
-            val playerName = binding.editTextTextPlayerName.text.toString()
+            val playerName = binding.textInputEditTextPlayerName.text.toString()
             "开始查询${playerName}\n请等待当前查询结束".showToast()
             binding.progressBarQuery.progress = 0
             binding.textViewProgress.text = "0/30"
