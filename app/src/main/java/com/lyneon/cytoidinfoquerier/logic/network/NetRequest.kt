@@ -1,6 +1,7 @@
 package com.lyneon.cytoidinfoquerier.logic.network
 
 import com.lyneon.cytoidinfoquerier.logic.model.B30Records
+import com.lyneon.cytoidinfoquerier.logic.model.LevelProfile
 import com.lyneon.cytoidinfoquerier.logic.model.PlayerProfile
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -8,7 +9,9 @@ import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.internal.userAgent
 
 private val json = Json { ignoreUnknownKeys = true }
 
@@ -17,6 +20,7 @@ object NetRequest {
         val client = OkHttpClient()
         val request = Request.Builder()
             .url("https://services.cytoid.io/profile/$playerName/details")
+            .removeHeader("User-Agent").addHeader("User-Agent","CytoidClient/2.1.1")
             .build()
         val result = withContext(Dispatchers.IO) {
             val response = client.newCall(request).execute()
@@ -39,26 +43,50 @@ object NetRequest {
 
     fun getB30Records(playerName: String, count: Int): B30Records {
         val client = OkHttpClient()
-//        val data = "{\"query\":\"query StudioAnalytics(${'$'}id:ID=\"${id}\") {profile(id:${'$'}id) {bestRecords(limit: 30) {score,details{perfect,great,good,bad,miss,maxCombo},mods,chart{name,difficulty,notesCount,level {title}},accuracy,rating}}}\"}"
-        val data = """{"operationName":null,
-            |"variables":{},
-            |"query":"{profile(uid:\"$playerName\"){bestRecords(limit:$count){date,score,mods,accuracy,rating,details{perfect,great,good,bad,miss,maxCombo},chart{type,difficulty,notesCount,level{title,bundle{backgroundImage{original,thumbnail}}}}}}}"}""".trimMargin()
-        val body = data.toRequestBody("application/json".toMediaTypeOrNull())
+        val requestBody = B30Records.getRequestBody(playerName, count)
+            .toRequestBody("application/json".toMediaTypeOrNull())
         val request = Request.Builder()
             .url("https://services.cytoid.io/graphql")
-            .post(body)
+            .removeHeader("User-Agent").addHeader("User-Agent","CytoidClient/2.1.1")
+            .post(requestBody)
             .build()
         val response = client.newCall(request).execute()
         val result = try {
             when (response.code) {
                 200 -> response.body?.string()
                 404 -> throw Exception("未找到玩家")
-                else -> throw Exception("Unknown Exception:HTTP response code ${response.code}")
+                else -> throw Exception("Unknown Exception:HTTP response code ${response.code}.${response.body?.string()}")
             }
         } finally {
             response.body?.close()
         }
 
+        if (result == null) {
+            throw Exception("Request failed")
+        } else {
+            return json.decodeFromString(result)
+        }
+    }
+
+    fun getLevelProfile(levelUid: String): LevelProfile {
+        val client = OkHttpClient()
+        val requestBody = LevelProfile.getRequestBody(levelUid)
+            .toRequestBody("application/json".toMediaTypeOrNull())
+        val request = Request.Builder()
+            .url("https://services.cytoid.io/graphql")
+            .removeHeader("User-Agent").addHeader("User-Agent","CytoidClient/2.1.1")
+            .post(requestBody)
+            .build()
+        val response = client.newCall(request).execute()
+        val result = try {
+            when (response.code) {
+                200 -> response.body?.string()
+                404 -> throw Exception("未找到关卡")
+                else -> throw Exception("Unknown Exception:HTTP response code ${response.code}")
+            }
+        } finally {
+            response.body?.close()
+        }
         if (result == null) {
             throw Exception("Request failed")
         } else {

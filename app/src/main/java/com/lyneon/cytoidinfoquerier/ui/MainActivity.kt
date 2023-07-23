@@ -20,7 +20,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.lyneon.cytoidinfoquerier.BaseApplication
 import com.lyneon.cytoidinfoquerier.R
 import com.lyneon.cytoidinfoquerier.databinding.ActivityMainBinding
-import com.lyneon.cytoidinfoquerier.logic.DataParser
+import com.lyneon.cytoidinfoquerier.logic.dao.DataParser
 import com.lyneon.cytoidinfoquerier.logic.network.NetRequest
 import com.lyneon.cytoidinfoquerier.tool.save
 import com.lyneon.cytoidinfoquerier.tool.showToast
@@ -39,6 +39,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
+        setSupportActionBar(binding.mainToolbar)
 
         binding.textInputEditTextPlayerName.addTextChangedListener {
             if (it.isNullOrEmpty()) binding.textInputEditTextPlayerName.error = "玩家名不能为空"
@@ -87,14 +88,18 @@ class MainActivity : AppCompatActivity() {
                         binding.recyclerViewResult.layoutManager = LinearLayoutManager(this)
                     }
                 }
-            }catch (e:Exception){
+            } catch (e: Exception) {
                 this.startActivity<CrashActivity> {
-                    putExtra("e",e.stackTraceToString())
+                    putExtra("e", e.stackTraceToString())
                 }
-            }finally {
+            } finally {
                 binding.buttonQueryB30.isClickable = true
             }
         }
+    }
+
+    override fun onBackPressed() {
+        finish()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -121,7 +126,7 @@ class MainActivity : AppCompatActivity() {
 
 class Record(val bgImage: Bitmap, val detail: String, val bgImageSource: String)
 
-class B30RecordsAdapter(val b30Records: List<Record>) :
+class B30RecordsAdapter(private val b30Records: List<Record>) :
     RecyclerView.Adapter<B30RecordsAdapter.ViewHolder>() {
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {

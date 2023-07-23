@@ -1,4 +1,4 @@
-package com.lyneon.cytoidinfoquerier.logic
+package com.lyneon.cytoidinfoquerier.logic.dao
 
 import com.lyneon.cytoidinfoquerier.logic.model.B30Records
 import com.lyneon.cytoidinfoquerier.logic.model.PlayerProfile

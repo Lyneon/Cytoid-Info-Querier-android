@@ -6,6 +6,6 @@
         android:id="@+id/menu_main_save"
         android:icon="@drawable/baseline_save_24"
         android:title="@string/save"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="ifRoom" />
 
 </menu>

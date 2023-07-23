@@ -18,6 +18,7 @@ class CrashActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityCrashBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        setSupportActionBar(binding.crashToolbar)
 
         binding.textViewErrorMessage.text = intent.getStringExtra("e")
     }

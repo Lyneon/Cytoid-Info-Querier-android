@@ -1,72 +1,92 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.MainActivity">
+    android:layout_height="match_parent">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayout_playerName"
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/playerName"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_height="wrap_content">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/textInputEditText_playerName"
+        <androidx.appcompat.widget.Toolbar
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            android:id="@+id/main_toolbar"/>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:context=".ui.MainActivity">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textInputLayout_playerName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:hint="@string/playerName"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/textInputEditText_playerName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:autofillHints=""
+                android:ems="10"
+                android:inputType="text"
+                android:minHeight="48dp" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Button
+            android:id="@+id/button_queryB30"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
+            android:text="@string/b30"
+            app:layout_constraintStart_toStartOf="@+id/textInputLayout_playerName"
+            app:layout_constraintTop_toBottomOf="@+id/textInputLayout_playerName" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView_result"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.266"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/button_queryB30" />
+
+        <ProgressBar
+            android:id="@+id/progressBarQuery"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
-            android:autofillHints=""
-            android:ems="10"
-            android:inputType="text"
-            android:minHeight="48dp" />
+            android:layout_marginBottom="8dp"
+            android:max="30"
+            app:layout_constraintBottom_toBottomOf="@+id/button_queryB30"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/button_queryB30" />
 
-    </com.google.android.material.textfield.TextInputLayout>
+        <TextView
+            android:id="@+id/textViewProgress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0/30"
+            app:layout_constraintBottom_toTopOf="@+id/progressBarQuery"
+            app:layout_constraintStart_toStartOf="@+id/progressBarQuery" />
 
-    <Button
-        android:id="@+id/button_queryB30"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:text="@string/b30"
-        app:layout_constraintStart_toStartOf="@+id/textInputLayout_playerName"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayout_playerName" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView_result"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.266"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button_queryB30" />
-
-    <ProgressBar
-        android:id="@+id/progressBarQuery"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:max="30"
-        app:layout_constraintBottom_toBottomOf="@+id/button_queryB30"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/button_queryB30" />
-
-    <TextView
-        android:id="@+id/textViewProgress"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="0/30"
-        app:layout_constraintBottom_toTopOf="@+id/progressBarQuery"
-        app:layout_constraintStart_toStartOf="@+id/progressBarQuery" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
