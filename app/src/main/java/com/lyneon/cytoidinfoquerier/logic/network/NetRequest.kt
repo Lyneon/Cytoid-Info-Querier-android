@@ -5,13 +5,12 @@ import com.lyneon.cytoidinfoquerier.logic.model.LevelProfile
 import com.lyneon.cytoidinfoquerier.logic.model.PlayerProfile
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
-import okhttp3.internal.userAgent
 
 private val json = Json { ignoreUnknownKeys = true }
 
@@ -20,7 +19,7 @@ object NetRequest {
         val client = OkHttpClient()
         val request = Request.Builder()
             .url("https://services.cytoid.io/profile/$playerName/details")
-            .removeHeader("User-Agent").addHeader("User-Agent","CytoidClient/2.1.1")
+            .removeHeader("User-Agent").addHeader("User-Agent", "CytoidClient/2.1.1")
             .build()
         val result = withContext(Dispatchers.IO) {
             val response = client.newCall(request).execute()
@@ -41,13 +40,13 @@ object NetRequest {
         }
     }
 
-    fun getB30Records(playerName: String, count: Int): B30Records {
+    fun getB30RecordsString(playerName: String, count: Int): String? {
         val client = OkHttpClient()
         val requestBody = B30Records.getRequestBody(playerName, count)
             .toRequestBody("application/json".toMediaTypeOrNull())
         val request = Request.Builder()
             .url("https://services.cytoid.io/graphql")
-            .removeHeader("User-Agent").addHeader("User-Agent","CytoidClient/2.1.1")
+            .removeHeader("User-Agent").addHeader("User-Agent", "CytoidClient/2.1.1")
             .post(requestBody)
             .build()
         val response = client.newCall(request).execute()
@@ -60,13 +59,11 @@ object NetRequest {
         } finally {
             response.body?.close()
         }
-
-        if (result == null) {
-            throw Exception("Request failed")
-        } else {
-            return json.decodeFromString(result)
-        }
+        return result
     }
+
+    fun getB30Records(b30RecordsString: String): B30Records =
+        json.decodeFromString(b30RecordsString)
 
     fun getLevelProfile(levelUid: String): LevelProfile {
         val client = OkHttpClient()
@@ -74,7 +71,7 @@ object NetRequest {
             .toRequestBody("application/json".toMediaTypeOrNull())
         val request = Request.Builder()
             .url("https://services.cytoid.io/graphql")
-            .removeHeader("User-Agent").addHeader("User-Agent","CytoidClient/2.1.1")
+            .removeHeader("User-Agent").addHeader("User-Agent", "CytoidClient/2.1.1")
             .post(requestBody)
             .build()
         val response = client.newCall(request).execute()
