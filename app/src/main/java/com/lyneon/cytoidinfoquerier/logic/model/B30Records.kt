@@ -39,6 +39,7 @@ data class B30Records(val data: Data) {
                 ) {
                     @Serializable
                     data class Level(
+                        val uid: String,
                         val title: String,
                         val bundle: Bundle
                     ) {
@@ -62,7 +63,7 @@ data class B30Records(val data: Data) {
         fun getRequestBody(playerName: String, count: Int): String = """{
   "operationName": null,
   "variables": {},
-  "query": "{\n  profile(uid: \"${playerName}\") {\n    bestRecords(limit: ${count}) {\n      date\n      chart {\n        name\n        difficulty\n        type\n        notesCount\n        level {\n          title\n          bundle {\n            backgroundImage {\n              original\n              thumbnail\n            }\n          }\n        }\n      }\n      score\n      accuracy\n      mods\n      details {\n        perfect\n        great\n        good\n        bad\n        miss\n        maxCombo\n      }\n      rating\n    }\n  }\n}\n"
+  "query": "{\n  profile(uid: \"${playerName}\") {\n    bestRecords(limit: ${count}) {\n      date\n      chart {\n        name\n        difficulty\n        type\n        notesCount\n        level {\n          uid\n          title\n          bundle {\n            backgroundImage {\n              original\n              thumbnail\n            }\n          }\n        }\n      }\n      score\n      accuracy\n      mods\n      details {\n        perfect\n        great\n        good\n        bad\n        miss\n        maxCombo\n      }\n      rating\n    }\n  }\n}\n"
 }"""
     }
 }

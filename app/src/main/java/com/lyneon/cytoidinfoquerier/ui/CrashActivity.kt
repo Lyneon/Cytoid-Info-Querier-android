@@ -5,12 +5,12 @@ import android.content.ClipboardManager
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import com.lyneon.cytoidinfoquerier.BaseActivity
+import androidx.appcompat.app.AppCompatActivity
 import com.lyneon.cytoidinfoquerier.R
 import com.lyneon.cytoidinfoquerier.databinding.ActivityCrashBinding
 import com.lyneon.cytoidinfoquerier.tool.showToast
 
-class CrashActivity : BaseActivity() {
+class CrashActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityCrashBinding
 

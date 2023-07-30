@@ -32,6 +32,7 @@ import com.lyneon.cytoidinfoquerier.tool.startActivity
 import com.lyneon.cytoidinfoquerier.tool.toBitmap
 import java.io.BufferedInputStream
 import java.net.URL
+import java.util.concurrent.CountDownLatch
 import kotlin.concurrent.thread
 
 
@@ -66,15 +67,15 @@ class MainActivity : AppCompatActivity() {
                 binding.progressBarQuery.progress = 0
                 binding.textViewProgress.text = "0/30"
                 binding.buttonQueryB30.isClickable = false
-                try {
-                    thread {
+                thread {
+                    try {
                         val recordsString = loadStringFile(playerName)
                         val records = NetRequest.getB30Records(recordsString)
                         val recordList = ArrayList<Record>().toMutableList()
                         var progress = 0
                         for (record in records.data.profile.bestRecords) {
                             val bgImage =
-                                BitmapFactory.decodeStream(BufferedInputStream(openFileInput("${playerName}_${progress}")))
+                                BitmapFactory.decodeStream(BufferedInputStream(openFileInput("${playerName}_${record.chart.level.uid}")))
                             recordList.add(
                                 Record(
                                     bgImage,
@@ -89,23 +90,25 @@ class MainActivity : AppCompatActivity() {
                             }
                         }
                         runOnUiThread {
-                            "完成".showToast()
                             binding.progressBarQuery.progress = 30
                             binding.recyclerViewResult.adapter = B30RecordsAdapter(recordList)
                             binding.recyclerViewResult.layoutManager = LinearLayoutManager(this)
                         }
+                    } catch (e: Exception) {
+                        this.startActivity<CrashActivity> {
+                            putExtra("e", e.stackTraceToString())
+                        }
+                    } finally {
+                        runOnUiThread {
+                            binding.buttonQueryB30.isClickable = true
+                        }
                     }
-                } catch (e: Exception) {
-                    this.startActivity<CrashActivity> {
-                        putExtra("e", e.stackTraceToString())
-                    }
-                } finally {
-                    binding.buttonQueryB30.isClickable = true
                 }
+
             } else {
                 "开始查询${playerName}\n请等待当前查询结束".showToast()
                 bufferedPlayerSharedPreference.edit {
-                    putLong(playerName,System.currentTimeMillis())
+                    putLong(playerName, System.currentTimeMillis())
                     apply()
                 }
                 binding.progressBarQuery.progress = 0
@@ -114,42 +117,73 @@ class MainActivity : AppCompatActivity() {
                 try {
                     thread {
                         val recordsString = NetRequest.getB30RecordsString(playerName, 30)
+                        val cdl = CountDownLatch(30)
                         if (recordsString == null) {
                             throw Exception()
                         } else {
                             val records = NetRequest.getB30Records(recordsString)
                             saveStringFile(playerName, recordsString)
-                            val recordList = ArrayList<Record>().toMutableList()
+//                            val recordList = ArrayList<Record>().toMutableList()
                             var progress = 0
                             for (record in records.data.profile.bestRecords) {
-                                val bgImage = try {
-                                    URL(record.chart.level.bundle.backgroundImage.thumbnail).toBitmap()
-                                } catch (e: Exception) {
-                                    e.printStackTrace()
-                                    BitmapFactory.decodeResource(
-                                        resources,
-                                        R.drawable.sayakacry
+                                thread {
+                                    val bgImage = try {
+                                        URL(record.chart.level.bundle.backgroundImage.thumbnail).toBitmap()
+                                    } catch (e: Exception) {
+                                        e.printStackTrace()
+                                        BitmapFactory.decodeResource(
+                                            resources,
+                                            R.drawable.sayakacry
+                                        )
+                                    }
+                                    saveImageFile(
+                                        "${playerName}_${record.chart.level.uid}",
+                                        bgImage
                                     )
-                                }
-                                saveImageFile("${playerName}_${progress}", bgImage)
-                                recordList.add(
-                                    Record(
-                                        bgImage,
-                                        DataParser.parseB30RecordToText(record),
-                                        record.chart.level.bundle.backgroundImage.original
-                                    )
-                                )
-                                progress++
-                                runOnUiThread {
-                                    binding.textViewProgress.text = "${progress}/30"
-                                    binding.progressBarQuery.progress = progress
+                                    progress++
+                                    runOnUiThread {
+                                        binding.textViewProgress.text = "${progress}/30"
+                                        binding.progressBarQuery.progress = progress
+                                    }
+                                    cdl.countDown()
                                 }
                             }
-                            runOnUiThread {
-                                "完成".showToast()
-                                binding.progressBarQuery.progress = 30
-                                binding.recyclerViewResult.adapter = B30RecordsAdapter(recordList)
-                                binding.recyclerViewResult.layoutManager = LinearLayoutManager(this)
+                            cdl.await()
+                            thread {
+                                try {
+                                    val recordList = ArrayList<Record>().toMutableList()
+                                    for (record in records.data.profile.bestRecords) {
+                                        val bgImage =
+                                            BitmapFactory.decodeStream(
+                                                BufferedInputStream(
+                                                    openFileInput("${playerName}_${record.chart.level.uid}")
+                                                )
+                                            )
+                                        recordList.add(
+                                            Record(
+                                                bgImage,
+                                                DataParser.parseB30RecordToText(record),
+                                                record.chart.level.bundle.backgroundImage.original
+                                            )
+                                        )
+                                    }
+                                    runOnUiThread {
+                                        "完成".showToast()
+                                        binding.progressBarQuery.progress = 30
+                                        binding.recyclerViewResult.adapter =
+                                            B30RecordsAdapter(recordList)
+                                        binding.recyclerViewResult.layoutManager =
+                                            LinearLayoutManager(this)
+                                    }
+                                } catch (e: Exception) {
+                                    this.startActivity<CrashActivity> {
+                                        putExtra("e", e.stackTraceToString())
+                                    }
+                                } finally {
+                                    runOnUiThread {
+                                        binding.buttonQueryB30.isClickable = true
+                                    }
+                                }
                             }
                         }
                     }
