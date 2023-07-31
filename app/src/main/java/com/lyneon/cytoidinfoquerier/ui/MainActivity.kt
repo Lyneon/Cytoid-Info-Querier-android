@@ -1,5 +1,6 @@
 package com.lyneon.cytoidinfoquerier.ui
 
+import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Intent
 import android.graphics.Bitmap
@@ -16,8 +17,8 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
 import androidx.core.widget.addTextChangedListener
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.lyneon.cytoidinfoquerier.BaseApplication
 import com.lyneon.cytoidinfoquerier.R
 import com.lyneon.cytoidinfoquerier.databinding.ActivityMainBinding
@@ -40,6 +41,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -96,7 +98,8 @@ class MainActivity : AppCompatActivity() {
                         runOnUiThread {
                             binding.progressBarQuery.progress = records_count
                             binding.recyclerViewResult.adapter = B30RecordsAdapter(recordList)
-                            binding.recyclerViewResult.layoutManager = LinearLayoutManager(this)
+                            binding.recyclerViewResult.layoutManager =
+                                StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
                         }
                     } catch (e: Exception) {
                         this.startActivity<CrashActivity> {
@@ -180,7 +183,10 @@ class MainActivity : AppCompatActivity() {
                                         binding.recyclerViewResult.adapter =
                                             B30RecordsAdapter(recordList)
                                         binding.recyclerViewResult.layoutManager =
-                                            LinearLayoutManager(this)
+                                            StaggeredGridLayoutManager(
+                                                2,
+                                                StaggeredGridLayoutManager.VERTICAL
+                                            )
                                     }
                                 } catch (e: Exception) {
                                     this.startActivity<CrashActivity> {
