@@ -65,12 +65,16 @@ class MainActivity : AppCompatActivity() {
             if (bufferedPlayerTime != -1L && (System.currentTimeMillis() - bufferedPlayerTime) <= 21600000L) {
                 "6小时内有查询记录，使用缓存数据".showToast()
                 binding.progressBarQuery.progress = 0
-                binding.textViewProgress.text = "0/30"
                 binding.buttonQueryB30.isClickable = false
                 thread {
                     try {
                         val recordsString = loadStringFile(playerName)
                         val records = NetRequest.getB30Records(recordsString)
+                        val records_count = records.data.profile.bestRecords.size
+                        runOnUiThread {
+                            binding.progressBarQuery.max = records_count
+                            binding.textViewProgress.text = "0/${records_count}"
+                        }
                         val recordList = ArrayList<Record>().toMutableList()
                         var progress = 0
                         for (record in records.data.profile.bestRecords) {
@@ -85,12 +89,12 @@ class MainActivity : AppCompatActivity() {
                             )
                             progress++
                             runOnUiThread {
-                                binding.textViewProgress.text = "${progress}/30"
+                                binding.textViewProgress.text = "${progress}/${records_count}"
                                 binding.progressBarQuery.progress = progress
                             }
                         }
                         runOnUiThread {
-                            binding.progressBarQuery.progress = 30
+                            binding.progressBarQuery.progress = records_count
                             binding.recyclerViewResult.adapter = B30RecordsAdapter(recordList)
                             binding.recyclerViewResult.layoutManager = LinearLayoutManager(this)
                         }
@@ -112,18 +116,21 @@ class MainActivity : AppCompatActivity() {
                     apply()
                 }
                 binding.progressBarQuery.progress = 0
-                binding.textViewProgress.text = "0/30"
                 binding.buttonQueryB30.isClickable = false
                 try {
                     thread {
                         val recordsString = NetRequest.getB30RecordsString(playerName, 30)
-                        val cdl = CountDownLatch(30)
                         if (recordsString == null) {
                             throw Exception()
                         } else {
                             val records = NetRequest.getB30Records(recordsString)
                             saveStringFile(playerName, recordsString)
-//                            val recordList = ArrayList<Record>().toMutableList()
+                            val records_count = records.data.profile.bestRecords.size
+                            runOnUiThread {
+                                binding.progressBarQuery.max = records_count
+                                binding.textViewProgress.text = "0/${records_count}"
+                            }
+                            val cdl = CountDownLatch(records_count)
                             var progress = 0
                             for (record in records.data.profile.bestRecords) {
                                 thread {
@@ -142,7 +149,8 @@ class MainActivity : AppCompatActivity() {
                                     )
                                     progress++
                                     runOnUiThread {
-                                        binding.textViewProgress.text = "${progress}/30"
+                                        binding.textViewProgress.text =
+                                            "${progress}/${records_count}"
                                         binding.progressBarQuery.progress = progress
                                     }
                                     cdl.countDown()
@@ -169,7 +177,6 @@ class MainActivity : AppCompatActivity() {
                                     }
                                     runOnUiThread {
                                         "完成".showToast()
-                                        binding.progressBarQuery.progress = 30
                                         binding.recyclerViewResult.adapter =
                                             B30RecordsAdapter(recordList)
                                         binding.recyclerViewResult.layoutManager =
